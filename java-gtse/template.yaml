@@ -1,0 +1,56 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+Description: >
+  java-gtse
+
+  Sample SAM Template for java-gtse
+
+# More info about Globals: https://github.com/awslabs/serverless-application-model/blob/master/docs/globals.rst
+Globals:
+  Function:
+    Timeout: 20
+    MemorySize: 512
+
+Resources:
+  HelloWorldFunction:
+    Type: AWS::Serverless::Function # More info about Function Resource: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#awsserverlessfunction
+    Properties:
+      CodeUri: HelloWorldFunction
+      FunctionName: '<FunctionName>'
+      Handler: helloworld.MyLambdaHandler
+      Runtime: java21
+      Architectures:
+        - x86_64
+      MemorySize: 512
+      Environment: # More info about Env Vars: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#environment-object
+        Variables:
+          NEW_RELIC_ACCOUNT_ID: <NR-Account-ID>
+
+          NEW_RELIC_EXTENSION_LOG_LEVEL: DEBUG
+
+          NEW_RELIC_EXTENSION_SEND_EXTENSION_LOGS: true
+
+          NEW_RELIC_EXTENSION_SEND_FUNCTION_LOGS: true
+
+          NEW_RELIC_LICENSE_KEY: <NR-API-KEY>
+      
+      Layers:
+        # This layer includes the New Relic Lambda extension, a sidecar process that sends telemetry,
+        # as well as the New Relic agent for Node.js, and a handler wrapper that makes integration easy.
+        - !Sub arn:aws:lambda:<AWS-REGION>:<AWS-ACCOUNT-ID>:layer:NewRelicLambdaExtension:99
+      
+      Policies:
+        # This policy allows the lambda to know the value of the New Relic license key. We need this so
+        # that we can send telemetry back to New Relic
+        - AWSSecretsManagerGetSecretValuePolicy:
+            SecretArn: !ImportValue NewRelicLicenseKeySecret-NewRelic-LicenseKeySecretARN
+
+Outputs:
+  # ServerlessRestApi is an implicit API created out of Events key under Serverless::Function
+
+  HelloWorldFunction:
+    Description: "Hello World Lambda Function ARN"
+    Value: !GetAtt HelloWorldFunction.Arn
+  HelloWorldFunctionIamRole:
+    Description: "Implicit IAM Role created for Hello World function"
+    Value: !GetAtt HelloWorldFunctionRole.Arn

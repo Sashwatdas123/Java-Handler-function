@@ -1,0 +1,20 @@
+plugins {
+    id 'java'
+}
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    implementation 'com.amazonaws:aws-lambda-java-core:1.2.2'
+    implementation 'com.amazonaws:aws-lambda-java-events:3.11.0'
+    testImplementation 'junit:junit:4.13.2'
+    // New Relic OpenTracing Lambda Tracer (bump to latest versions from README if desired)
+    implementation 'com.newrelic.opentracing:java-aws-lambda:2.2.0'
+    implementation 'com.newrelic.opentracing:newrelic-java-lambda:2.2.4'
+    implementation 'io.opentracing:opentracing-util:0.33.0'
+}
+
+sourceCompatibility = 21
+targetCompatibility = 21
